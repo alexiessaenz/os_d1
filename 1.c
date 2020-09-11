@@ -1,31 +1,46 @@
+#include <sys/types.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
 
-int main() {
-    int pid, pid2;
+void * msg(void *arg){
+    char nombre[45], apellido[45];
+    int i;
+    
+    printf("Introduce un nombre:\n");
+    scanf("%s",nombre);
 
-    printf("principalPADRE: Soy el proceso padre y mi pid es: %d\n", getpid());
+    printf("Introduce un apellido:\n");
+    scanf("%s",apellido);
 
-    printf("1: hijo %d de %d\n", getpid(), getppid());
-    pid = fork();
-    printf("2: hijo %d de %d\n", getpid(), getppid());
-    pid = fork();
-    printf("3: hijo %d de %d\n", getpid(), getppid());
-
-
-
-    // En cuanto llamamos a fork se crea un nuevo proceso. En el proceso
-    // padre 'pid' contendrá el pid del proceso hijo. En el proceso hijo
-    // 'pid' valdrá 0. Eso es lo que usamos para distinguir si el código
-    // que se está ejecutando pertenece al padre o al hijo.
-
-    if (pid) // Este es el proceso padre
+    strcat(nombre,apellido);
+    if (strlen(nombre)>25)
     {
-        printf("PADRE: Soy el proceso padre y mi pid sigue siendo: %d\n", getpid());
-        printf("PADRE: Mi hijo tiene el pid: %d\n", pid);
-    }
-    else // Proceso hijo
+        printf("WILL TRUNCATE\n\n");
+    } 
+    else
     {
-        printf("HIJO: Soy el proceso hijo y mi pid es: %d\n", getpid());
-        printf("HIJO: mi padre tiene el pid: %d\n", getppid());
+        printf("NO PROBLEM\n\n");
+        printf("pid: %d\n", getpid());
+
     }
+    
+        return NULL;
+}
+
+int main(int argc, char *argv []) {
+    pthread_t h;
+    
+    for (int i = 0; i < 3; i++)
+    {
+        pthread_create(&h, NULL, msg, NULL);
+        pthread_join(h,NULL);
+    }
+    
+    
+    printf("\tfin\n");
+    
+   return 0;
 }
